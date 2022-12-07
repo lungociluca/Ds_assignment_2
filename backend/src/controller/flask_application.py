@@ -42,6 +42,7 @@ db = SQLAlchemy(app)
 service_obj = service.Service(db)
 sock = Sock(app)
 
+path_warnings = os.path.join(os.path.dirname(__file__), 'warnings')
 
 @sock.route('/echo')
 def echo(sock):
@@ -51,7 +52,7 @@ def echo(sock):
         data = data.split()
         device_id, date = data[0], data[1]
         user_id = service_obj.get_device_by_id(device_id).ID
-        with open(os.path.join('warnings', f'{device_id}_{user_id}'), 'w') as fout:
+        with open(os.path.join(path_warnings, f'{device_id}_{user_id}'), 'w') as fout:
             fout.write(date)
 
 
@@ -179,11 +180,14 @@ def user_page(month_int, year):
     print(days, month, year)
 
     warning = ''
+    files = []
 
-    files = os.listdir('warnings')
+    print("dir ", os.getcwd())
+    files = os.listdir(path_warnings)
+
     for file in files:
         if file.startswith(str(session['id'])):
-            with open(os.path.join('warnings', file)) as fin:
+            with open(os.path.join(path_warnings, file)) as fin:
                 device_id = file.split('_')[1]
                 warning =  f'Device {device_id} has passed the allowed hourly consumption at {fin.read()}'
 

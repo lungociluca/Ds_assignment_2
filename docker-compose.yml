@@ -28,6 +28,7 @@ services:
     # putem spune de ce alte containere depinde acest container
     depends_on:
       - python_app
+      - producer
 
   producer:
     container_name: producer

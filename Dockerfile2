@@ -15,4 +15,4 @@ RUN pip install -U Flask-SQLAlchemy
 RUN pip install pika
 
 # stabilim comanda implicita folosita la rularea containerului
-CMD python ./message_producer.py 2
+CMD python ./message_producer.py 3

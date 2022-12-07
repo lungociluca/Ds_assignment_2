@@ -87,16 +87,20 @@ class Consumer(object):
         channel.basic_consume(queue='hello', on_message_callback=self.callback, auto_ack=True)
 
         print(' [*] Waiting for messages. To exit press CTRL+C')
-        channel.start_consuming()
-
+        while True:
+            try:
+                channel.start_consuming()
+            except:
+                print('timeout')
+                
     async def test(self, message):
-        async with websockets.connect('ws://127.0.0.1:5000/echo') as websocket:
+        async with websockets.connect('ws://172.19.0.4:5000/echo') as websocket:
             await websocket.send(str(message))
             response = await websocket.recv()
             print(response)
+        pass
     
 if __name__ == '__main__':
     obj = Consumer()
     #asyncio.get_event_loop().run_until_complete(obj.test())
-    time.sleep(20)
     obj.main()
