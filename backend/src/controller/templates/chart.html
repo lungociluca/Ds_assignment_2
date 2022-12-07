@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8">
+ </head>
+ <body>
+
+    <h1>Plot for {{ day }} {{ month }} {{ year }}.</h1>
+
+    <div class="chart-container" style="position: absolute; right: 3px; height:20vh; width:40vw">
+        <canvas id="myChartPie"></canvas>
+    </div>
+
+
+    <div class="chart-container" style="position: absolute; left: 3px; height:40vh; width:50vw">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div>
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const ctx2 = document.getElementById('myChartPie').getContext('2d');
+            let my_list = JSON.parse({{ my_data | tojson }});
+            let my_labels = JSON.parse({{ labels | tojson }});
+            let barColors = ["red", "green","blue","orange","brown"];
+
+            ctx.fillRect(50, 50, 100, 100);
+
+            const myChart = new Chart(ctx, {
+               type: 'bar',
+               data: {
+                   labels: my_labels,
+                   datasets: [{
+                       backgroundColor: barColors,
+                       label: 'Average energy consumption',
+                       data: my_list, // Data on Y axis
+                       borderWidth: 1
+                   }]
+               }
+            });
+
+
+            const myChart2 = new Chart(ctx2, {
+               type: 'pie',
+               data: {
+                   labels: my_labels,
+                   datasets: [{
+                       backgroundColor: barColors,
+                       label: 'Average energy consumption',
+                       data: my_list, // Data on Y axis
+                       borderWidth: 1
+                   }]
+               }
+            });
+        </script>
+    </div>
+ </body>
+</html>

@@ -1,0 +1,54 @@
+version: '3'
+services:
+  python_app:
+    container_name: python_app
+    # pentru build, se va folosi directorul curent drept context
+    # iar fisierul folosit pentru build de imagine va fi Dockerfile
+    build: 
+      context: ./backend
+      dockerfile: ../Dockerfile1
+    # stabilim portul pe care vrem sa il expunem pe host
+    ports:
+      - "5000:5000"
+      #- "1239:8001"
+    # putem spune de ce alte containere depinde acest container
+    depends_on:
+      - postgres_demo_app
+
+  consumer:
+    container_name: consumer
+    # pentru build, se va folosi directorul curent drept context
+    # iar fisierul folosit pentru build de imagine va fi Dockerfile
+    build: 
+      context: ./Ds_assignment_2
+      dockerfile: ../Dockerfile3
+    # stabilim portul pe care vrem sa il expunem pe host
+    ports:
+      - "5672:5672"
+    # putem spune de ce alte containere depinde acest container
+    depends_on:
+      - python_app
+
+  producer:
+    container_name: producer
+    # pentru build, se va folosi directorul curent drept context
+    # iar fisierul folosit pentru build de imagine va fi Dockerfile
+    build: 
+      context: ./Ds_assignment_2
+      dockerfile: ../Dockerfile2
+    # stabilim portul pe care vrem sa il expunem pe host
+    #ports:
+      #- "1234:1234"
+    # putem spune de ce alte containere depinde acest container
+  
+  postgres_demo_app:
+    image: postgres:latest
+    container_name: postgres_demo_app 
+    # avem nevoie de parola custom pentru postgres pentru ca URI-ul este urmatorul: postgresql://postgres:4681188652@postgres_demo_app:5432/postgres
+    environment:
+      - POSTGRES_PASSWORD=4681188652
+    ports:
+      - "5431:5432"
+    # cream volumul care ne va share-ui pe masina locala datele ce apartin bazei de date
+    volumes:
+      - "./postgres-db-data:/var/lib/postgresql/data"

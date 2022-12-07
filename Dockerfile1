@@ -1,0 +1,16 @@
+# stabilim imaginea de baza (ne intereseaza doar o imagine care ruleaza un Python3)
+FROM python:3
+
+# stabilim folderul in care lucram la constructia imaginii, si apoi folderul implicit folosit ca workdir atunci cand ruleaza containerul
+WORKDIR /app
+
+# copiem tot ce avem in folderul curent in imagine (in principal, ne-ar interesa sa copiem aplicatia Python)
+COPY . /app
+
+# instalam modulele de care are nevoie aplicatia
+RUN pip install flask redis psycopg2 websockets flask_sock
+
+RUN pip install -U Flask-SQLAlchemy
+
+# stabilim comanda implicita folosita la rularea containerului
+CMD python ./src/controller/flask_application.py

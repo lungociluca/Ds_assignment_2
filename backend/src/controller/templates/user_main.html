@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    </head>
+
+    <div class="center">
+
+        <h1>Hello {{ username }}</h1>
+
+            <p>You can click on a date from the calendar to see the average consumption of your devices.</p>
+            <h3>{{ warning }}</h3>
+            <table class="styled-table">
+
+            <thead>
+                <tr>
+
+                    {% for i in range(len_fields) %}
+                    <th>{{ fields[i] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+                {% for i in range(content_len) %}
+                <tbody>
+                {% if i % 2 == 0 %}
+                <tr>
+                {% else %}
+                <tr class="active-row">
+                {% endif %}
+                    {% for j in range(len_fields) %}
+                    <td>{{ content[i][j] }}</td>
+                    {% endfor %}
+                </tr>
+                    {% endfor %}
+            </table>
+
+        <br>
+        <br>
+
+        <div class="month">
+            <ul>
+                <li class="prev" onclick="window.location.href='{{ url_for( 'user_page',
+                    month_int=12 if month_int == 1 else month_int - 1,
+                    year=year-1 if month_int == 1 else year) }}';">&#10094;</li>
+                <li class="next" onclick="window.location.href='{{ url_for( 'user_page',
+                    month_int=1 if month_int == 12 else month_int + 1,
+                    year=year+1 if month_int == 12 else year) }}';">&#10095;</li>
+                <li>{{ month }}<br><span style="font-size:18px">{{ year }}</span></li>
+            </ul>
+        </div>
+
+        <ul class="weekdays">
+          <li>Mo</li>
+          <li>Tu</li>
+          <li>We</li>
+          <li>Th</li>
+          <li>Fr</li>
+          <li>Sa</li>
+          <li>Su</li>
+        </ul>
+
+        <ul class="days">
+            {% for i in range(days) %}
+            <li type="button" onclick="window.location.href='{{ url_for( 'show_chart', day=i+1, month=month, year=year) }}';">{{ i + 1 }}</li>
+            {% endfor %}
+        </ul>
+
+        <br>
+        <br>
+
+        <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'welcome') }}';">Exit</button>
+
+
+    </div>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+
+</head>
+<body>
+<div>
+
+    <div class="clearfix">
+        <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'admin_page') }}';">Exit</button>
+    </div>
+    <table class="styled-table">
+
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Password</th>
+            <th>Role</th>
+            {% for i in range(len) %}
+
+            {% endfor %}
+        </tr>
+    </thead>
+        {% for i in range(len) %}
+        <tbody>
+        {% if i % 2 == 0 %}
+        <tr>
+        {% else %}
+        <tr class="active-row">
+        {% endif %}
+            <td>{{ users[i].ID }}</td>
+            <td>{{ users[i].username }}</td>
+            <td>{{ users[i].password }}</td>
+            <td>{{ users[i].role }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+</body>
+</html>

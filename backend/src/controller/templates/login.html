@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    </head>
+
+    <div class="center">
+        <form  action="{{ url_for( 'login', sign_case=case) }}" method="post" style="border:1px solid #ccc">
+            <div class="container">
+                {% if case == 0 %}
+                <h1>Sign Up</h1>
+                {% else %}
+                <h1>Sign In</h1>
+                {% endif %}
+
+                <p>Please fill in this form.</p>
+                <hr>
+
+                <label for="username"><b>Username</b></label>
+                <input type="text" placeholder="Enter Username" name="username" required>
+
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" required>
+
+                {% if case == 0 %}
+                <label for="psw-repeat"><b>Repeat Password</b></label>
+                <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+                {% endif %}
+
+                <label>
+                    <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+                </label>
+
+                <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+                <h3>{{ message }}</h3>
+
+                <div class="clearfix">
+                    <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'welcome') }}';">Cancel</button>
+
+                    {% if case == 0 %}
+                    <button type="submit" class="signupbtn">Sign Up</button>
+                    {% else %}
+                    <button type="submit" class="signupbtn">Sign In</button>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    </head>
+
+    <div class="center">
+        <hr>
+        <hr>
+        Welcome
+        <hr>
+        <div class="clearfix">
+            <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'login', sign_case=1) }}';">Sing in</button>
+            <button type="button" class="signupbtn" onclick="window.location.href='{{ url_for( 'login', sign_case=0) }}';">Sign Up</button>
+        </div>
+    </div>
+</html>

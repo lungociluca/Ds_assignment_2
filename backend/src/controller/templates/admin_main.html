@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask application</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    </head>
+
+    <body>
+        <div class="center">
+
+            <h1>Admin page</h1>
+
+            {% if message %}
+            <h3>{{ message }}</h3>
+            {% endif %}
+
+            <div class="clearfix">
+                <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'get_users') }}';">View users</button>
+                <button type="button" class="signupbtn" onclick="window.location.href='{{ url_for( 'get_devices') }}';">View devices</button>
+            </div>
+
+            <form  action="{{ url_for('admin_page', scenario='user') }}" method="post"  style="border:1px solid #ccc">
+                <div class="container">
+
+                    <br>
+                    <h3>Create / Update / Delete user</h3>
+
+                    <label for="current_username"><b>Username</b></label>
+                    <input type="text" placeholder="Enter current username" name="current_username" >
+
+                    <label for="new_username"><b>New username</b></label>
+                    <input type="text" placeholder="Enter new username" name="new_username" >
+
+                    <label for="password"><b>Password</b></label>
+                    <input type="text" placeholder="Enter Password" name="password" >
+
+                    <label for="role"><b>Role</b></label>
+                    <input type="text" placeholder="Enter Role" name="role" >
+
+                    <label for="option_user"><b>Choose action:</b></label>
+                    <select id="option_user" name="option_user">
+                      <option value="create">Create</option>
+                      <option value="update">Update</option>
+                      <option value="delete">Delete</option>
+                    </select>
+
+                    <div class="clearfix">
+                        <button type="submit" class="signupbtn">Change user</button>
+                    </div>
+
+                </div>
+            </form>
+
+
+
+            <form  action="{{ url_for('admin_page', scenario='device') }}" method="post" style="border:1px solid #ccc">
+                <div class="container">
+
+                    <br>
+                    <h3>Create / Update / Delete device</h3>
+
+                    <label for="device_id"><b>Device id</b></label>
+                    <input type="text" placeholder="Enter device id" name="device_id" >
+
+                    <label for="description"><b>Description</b></label>
+                    <input type="text" placeholder="Enter Description" name="description" >
+
+                    <label for="max_hourly_consumption"><b>Max hourly consumption</b></label>
+                    <input type="text" placeholder="Enter max hourly consumption" name="max_hourly_consumption" >
+
+                    <label for="city"><b>City</b></label>
+                    <input type="text" placeholder="Ente the city" name="city" >
+
+                    <label for="country"><b>Country</b></label>
+                    <input type="text" placeholder="Enter the country" name="country" >
+
+                    <label for="owner"><b>Username</b></label>
+                    <input type="text" placeholder="Enter the owner name" name="owner" >
+
+                    <label for="option_devices"><b>Choose action:</b></label>
+                    <select id="option_devices" name="option_devices">
+                      <option value="create">Create</option>
+                      <option value="update">Update</option>
+                      <option value="delete">Delete</option>
+                    </select>
+
+                    <div class="clearfix">
+                        <button type="submit" class="signupbtn">Change device</button>
+                    </div>
+
+                </div>
+            </form>
+
+
+
+            <form  action="{{ url_for('admin_page', scenario='mapping') }}" method="post" style="border:1px solid #ccc">
+                <div class="container">
+
+                    <br>
+                    <h3>Update user-device mapping</h3>
+
+                    <label for="current_username"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="current_username" required>
+
+                    <label for="device_id"><b>Device ID</b></label>
+                    <input type="text" placeholder="Enter Device ID" name="device_id" required>
+                    <div class="clearfix">
+                        <button type="submit" class="signupbtn">Change mapping</button>
+                    </div>
+
+                </div>
+            </form>
+
+            <br>
+            <br>
+            <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'welcome') }}';">Exit</button>
+
+
+        </div>
+    </body>
+</html>
