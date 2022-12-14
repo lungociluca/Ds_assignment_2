@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+</head>
+
+<body style="margin:0">
+    <script type="text/javascript">
+        var ws = new WebSocket("ws://127.0.0.1:8001/");
+        var messages = document.getElementById('messages');
+        ws.onmessage = function (event) {
+            var messages = document.getElementById('messages');
+            var message = document.createElement('li');
+            var content = document.createTextNode(event.data);
+            message.appendChild(content);
+            messages.appendChild(message);
+        };
+    </script>
+    Messages:
+    <ul id="messages"><li>Hello!</li></ul>
+
+
+</body></html>

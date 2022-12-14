@@ -1,10 +1,12 @@
 import json
 
-from flask import Flask, url_for, session, flash
+from flask import Flask, url_for, session, flash, redirect
 from flask import request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import websockets
 import asyncio
+import threading
+import logging 
 
 from flask_sock import Sock
 
@@ -33,35 +35,45 @@ app = Flask(__name__)
 
 app.config.update(
     SECRET_KEY='4681188652',
-    SQLALCHEMY_DATABASE_URI='postgresql://postgres:4681188652@postgres_demo_app:5432/postgres',
-    #SQLALCHEMY_DATABASE_URI='postgresql://postgres:root@localhost/my_db',
+    SQLALCHEMY_DATABASE_URI='postgresql://postgres:4681188652@10.5.0.5:5432/postgres',
+    # SQLALCHEMY_DATABASE_URI='postgresql://postgres:root@localhost/my_db',
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 )
 
 db = SQLAlchemy(app)
 service_obj = service.Service(db)
 sock = Sock(app)
+lock = threading.Lock()
 
 path_warnings = os.path.join(os.path.dirname(__file__), 'warnings')
 
+users_to_notify = set()
+
+
+@app.route('/get_status/<int:user_id>')
+def get_status(user_id):
+
+    to_return = 'Do nothing'
+    lock.acquire()
+    if user_id in users_to_notify:
+        to_return = 'Refresh'
+    lock.release()
+    return to_return
+
+
 @sock.route('/echo')
 def echo(sock):
-    while True:
-        data = sock.receive()
-        sock.send(data)
-        data = data.split()
-        device_id, date = data[0], data[1]
-        user_id = service_obj.get_device_by_id(device_id).ID
-        with open(os.path.join(path_warnings, f'{device_id}_{user_id}'), 'w') as fout:
-            fout.write(date)
-
-
-async def handler(websocket):
-    data = await websocket.recv()
-
-    reply = f"Data recieved as:  {data}!"
-    print(data)
-    await websocket.send(reply)
+    data = sock.receive()
+    sock.send(data)
+    data = data.split()
+    device_id, date = data[0], data[1]
+    user_id = service_obj.get_device_by_id(device_id).owner_id
+    lock.acquire()
+    with open(os.path.join(path_warnings, f'{user_id}_{device_id}'), 'w') as fout:
+        fout.write(date)
+    global users_to_notify
+    users_to_notify.add(int(user_id))
+    lock.release()
 
 
 def check_if_admin():
@@ -163,6 +175,11 @@ def get_devices():
                            content_len=len(device_list))
 
 
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+
 @app.route('/main_page/<int:month_int>/<int:year>', methods=['GET'])
 def user_page(month_int, year):
     if 'id' not in session:
@@ -180,37 +197,42 @@ def user_page(month_int, year):
     print(days, month, year)
 
     warning = ''
-    files = []
 
-    print("dir ", os.getcwd())
+    lock.acquire()
     files = os.listdir(path_warnings)
 
-    for file in files:
-        if file.startswith(str(session['id'])):
-            with open(os.path.join(path_warnings, file)) as fin:
-                device_id = file.split('_')[1]
-                warning =  f'Device {device_id} has passed the allowed hourly consumption at {fin.read()}'
+    global users_to_notify
+    if session['id'] in users_to_notify:
+        for file in files:
+            if file.startswith(str(session['id'])):
+                with open(os.path.join(path_warnings, file)) as fin:
+                    device_id = file.split('_')[1]
+                    warning = f'Device {device_id} has passed the allowed hourly consumption at {fin.read()}'
 
-
+        # if the flag for our user was set, remove it, will not show the warning again if user refreshes
+        users_to_notify.remove(session['id'])
+    lock.release()
     return render_template('user_main.html',
                            days=days, month=month, year=year, month_int=month_int,
                            username=user.username, index_device_id=constants.index_device,
                            len_fields=len(fields), fields=fields, content_len=len(devices),
-                           content=devices, warning=warning)
+                           content=devices, warning=warning, user_id=session['id'])
 
 
 @app.route('/chart/<int:day>/<string:month>/<int:year>', methods=['GET'])
 def show_chart(day, month, year):
     if 'id' not in session:
         return 'Must be logged in.'
-    devices = service_obj.get_devices_consumption_for_a_user_id(session['id'], day, constants.month_string_to_int[month], year)
+    devices = service_obj.get_devices_consumption_for_a_user_id(session['id'], day,
+                                                                constants.month_string_to_int[month], year)
     data, labels = [], []
     for device_id, consumption in devices:
         labels.append(f'Device {device_id}')
         data.append(consumption)
     print(data, labels)
 
-    return render_template('chart.html', day=day, month=month, year=year, month_int=constants.month_string_to_int[month],
+    return render_template('chart.html', day=day, month=month, year=year,
+                           month_int=constants.month_string_to_int[month],
                            my_data=json.dumps(data), labels=json.dumps(labels))
 
 

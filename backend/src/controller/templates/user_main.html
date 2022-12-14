@@ -4,6 +4,19 @@
     <head>
         <title>Flask application</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+        <script>
+        async function autoRefresh() {
+            let endpoint = '/get_status/';
+            let url = endpoint.concat('{{ user_id }}');
+
+            const response = await fetch(url).then(data => data.text());
+            console.log(response);
+            if( response == 'Refresh' ) {
+                window.location = '{{ url_for( 'user_page', month_int=month_int, year=year) }}';
+            }
+        }
+        setInterval('autoRefresh()', 4000);
+    </script>
     </head>
 
     <div class="center">
@@ -12,6 +25,9 @@
 
             <p>You can click on a date from the calendar to see the average consumption of your devices.</p>
             <h3>{{ warning }}</h3>
+
+
+
             <table class="styled-table">
 
             <thead>
@@ -71,7 +87,6 @@
         <br>
 
         <button type="button" class="cancelbtn" onclick="window.location.href='{{ url_for( 'welcome') }}';">Exit</button>
-
 
     </div>
 </html>

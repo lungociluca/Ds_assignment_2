@@ -14,6 +14,10 @@
 
     <div class="chart-container" style="position: absolute; left: 3px; height:40vh; width:50vw">
         <canvas id="myChart"></canvas>
+
+        <div class="clearfix">
+            <button type="button" class="signupbtn" onclick="window.location.href='{{ url_for( 'user_page', month_int=month_int, year=year) }}';">Exit</button>
+        </div>
     </div>
 
     <div>

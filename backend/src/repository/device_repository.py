@@ -71,6 +71,7 @@ class DeviceRepository:
         query = "UPDATE devices SET (description, address_id, max_hourly_consumption) = " \
                 "('%s', %d, %d) WHERE id = %d" \
                 "" % (device.description, device.address_id, device.max_hourly_consumption, device.ID)
+        print(query)
         self.db.engine.execute(query)
 
     def update_device_mapping(self, device_id, owner_id):

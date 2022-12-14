@@ -147,7 +147,7 @@ class Service:
             self.user_repository.update_user(user)
         elif scenario == 'device':
             device: models.Device = self.device_repository.find_by_id(id_entry_to_change)
-            country, city = None, None
+            country, city = self.address_repository.get_country_and_city_by_id(device.address_id)
 
             if form.get('description'):
                 device.description = form.get('description')
@@ -158,6 +158,7 @@ class Service:
             if form.get('country'):
                 country = form.get('country')
 
+            print("Address in fields", country, city)
             address_id = self.address_repository.insert_if_not_exists(country, city)
             if device.address_id != address_id:
                 device.address_id = address_id
