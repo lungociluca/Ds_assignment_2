@@ -37,6 +37,13 @@ class AddressRepository:
             return entry[0]
         return None
 
+    def get_country_and_city_by_id(self, Id):
+        query = "SELECT country, city FROM addresses WHERE id = %d" % Id
+        result = self.db.engine.execute(query)
+        for entry in result:
+            return entry
+        return None
+
     def insert_if_not_exists(self, country, city):
         address_id = self.get_location_id(country, city)
         if address_id is not None:
